@@ -10,7 +10,6 @@ class TestDates(unittest.TestCase):
         random.seed(10)
 
     def test_normal_day_next(self):
-        pas
         day = random.randint(5, 20)
         month = random.choice(list(dates.MONTHS.keys()))
         year = random.randint(1980, 2018)
@@ -30,6 +29,16 @@ class TestDates(unittest.TestCase):
             self.assertEqual(my_date.day, 1)
             self.assertEqual(my_date.month, months[i+1])
             self.assertEqual(my_date.year, year)
+
+    def test_year_roll(self):
+        month = "December"
+        day = 31
+        year = random.randint(1980, 2018)
+        my_date = dates.Date(day, month, year)
+        my_date.next()
+        self.assertEqual(my_date.day, 1)
+        self.assertEqual(my_date.month, "January")
+        self.assertEqual(my_date.year, year+1)
 
 
 if __name__ == '__main__':
