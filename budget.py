@@ -4,18 +4,32 @@ __author__ = "James Gabriel <JamesCGabriel@gmail.com>"
 class Budget:
     """Budget object which keeps a running tally of all the money"""
 
-    def __init__(self, starting_amount):
+    def __init__(self, starting_amount, name):
+        self._name = name
         self._cash = starting_amount
+        self._incomes = []
+        self._expenses = []
+        self._taxes = 0
 
     @property
     def amount(self):
         return self._cash
+
+    @property
+    def name(self):
+        return self._name
 
     def deposit(self, other):
         self._cash += other
 
     def withdraw(self, other):
         self._cash -= other
+
+    def register_expenses(self, expense):
+        self._expenses.append(expense)
+
+    def register_income(self, income):
+        self._incomes.append(income)
 
 
 class CashFlow:
@@ -38,9 +52,11 @@ class CashFlow:
 
 
 class Expense(CashFlow):
+
     def __init__(self, budget: Budget, name: str, amount, execution_days=None):
         super().__init__(budget, name, amount)
         self._execution_days = execution_days
+        self._budget.register_expenses(self)
 
     def on_day_end(self, date):
         if self._execution_days is not None:
@@ -49,7 +65,8 @@ class Expense(CashFlow):
                     self._budget.withdraw(self._amount)
             if isinstance(self._execution_days, list):
                 if date.day in self._execution_days:
-                    self._budget.withdraw(self._amount / len(self._execution_days))
+                    self._budget.withdraw(
+                        self._amount / len(self._execution_days))
 
     def on_month_end(self):
         if self._execution_days is None:
@@ -57,9 +74,11 @@ class Expense(CashFlow):
 
 
 class Income(CashFlow):
+
     def __init__(self, budget: Budget, name: str, amount, execution_days):
         super().__init__(budget, name, amount)
         self._execution_days = execution_days
+        self._budget.register_income(self)
 
     def on_day_end(self, date):
         if self._execution_days is not None:
@@ -68,7 +87,8 @@ class Income(CashFlow):
                     self._budget.deposit(self._amount)
             if isinstance(self._execution_days, list):
                 if date.day in self._execution_days:
-                    self._budget.deposit(self._amount / len(self._execution_days))
+                    self._budget.deposit(
+                        self._amount / len(self._execution_days))
 
     def on_month_end(self):
         if self._execution_days is None:
