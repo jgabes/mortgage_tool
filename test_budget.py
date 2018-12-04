@@ -39,7 +39,7 @@ class TestBudgets(unittest.TestCase):
         expense.on_month_end()
         self.assertEqual(my_budget.amount, starting_amount - expense_amount)
 
-    def test_on_day_expense(self):
+    def test_eod_expense(self):
         date = dates.Date(4, "January", 2017)
         starting_amount = random.random() * 1000
         my_budget = budget.Budget(self.budget_name, starting_amount)
@@ -89,15 +89,14 @@ class TestBudgets(unittest.TestCase):
         initial_value = 100
         appreciation = 0.5
         property = budget.Property("cash house", my_budget, initial_value, appreciation)
-        self.assertEqual(my_budget.amount, 100+initial_value)
-
+        self.assertEqual(my_budget.amount, 100 + initial_value)
 
         my_budget.on_month_end()
-        delta = appreciation/12*initial_value
-        self.assertEqual(property.value, initial_value+delta)
-        self.assertEqual(my_budget.amount, 100+initial_value+delta)
+        delta = appreciation / 12 * initial_value
+        self.assertEqual(property.value, initial_value + delta)
+        self.assertEqual(my_budget.amount, 100 + initial_value + delta)
 
-    def test_cash_property(self):
+    def test_financed_property(self):
         my_budget = budget.Budget(self.budget_name, 100)
 
         principal = 100
@@ -109,12 +108,13 @@ class TestBudgets(unittest.TestCase):
         initial_value = 100
         appreciation = 0.5
         property = budget.Property("cash house", my_budget, initial_value, appreciation, loan)
-        self.assertEqual(my_budget.amount, 100+initial_value)
+        self.assertEqual(my_budget.amount, 100 + initial_value)
 
         my_budget.on_month_end()
-        delta = appreciation/12*initial_value
-        self.assertEqual(property.value, initial_value+delta)
-        self.assertEqual(my_budget.amount, 100+initial_value+delta-loan.monthly_payment)
+        delta = appreciation / 12 * initial_value
+        self.assertEqual(property.value, initial_value + delta)
+        self.assertEqual(my_budget.amount, 100 + initial_value + delta - loan.monthly_payment)
+
 
 if __name__ == '__main__':
     unittest.main()

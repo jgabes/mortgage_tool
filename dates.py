@@ -50,3 +50,10 @@ class Date:
     @property
     def year(self):
         return self._year
+
+    @ property
+    def eom(self):
+        if self._day == MONTHS[self.month]:
+            return True
+        else:
+            return False
