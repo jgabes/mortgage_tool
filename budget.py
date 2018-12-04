@@ -4,11 +4,12 @@ __author__ = "James Gabriel <JamesCGabriel@gmail.com>"
 class Budget:
     """Budget object which keeps a running tally of all the money"""
 
-    def __init__(self, starting_amount, name):
+    def __init__(self, name, starting_amount):
         self._name = name
         self._cash = starting_amount
         self._incomes = []
         self._expenses = []
+        self._properties = []
         self._taxes = 0
 
     @property
@@ -30,6 +31,18 @@ class Budget:
 
     def register_income(self, income):
         self._incomes.append(income)
+
+    def register_property(self, property):
+        self._properties.append(property)
+        self.deposit(property.value)
+
+    def on_month_end(self):
+        for income in self._incomes:
+            income.on_month_end()
+        for expense in self._expenses:
+            expense.on_month_end()
+        for property in self._properties:
+            property.on_month_end()
 
 
 class CashFlow:
@@ -95,8 +108,77 @@ class Income(CashFlow):
             self._budget.deposit(self._amount)
 
 
-class Morgage(CashFlow):
+class Loan(CashFlow):
     """Morgage is a CashFlow but it keeps its own internal state"""
 
-    def __init__(self):
-        pass
+    def __init__(self, name, principal, interest, length):
+        """
+        Args:
+            name: name of the loan
+            principal: amount of loan in dollars
+            interest: yearly interest rate (APR) 10% = 0.10
+            length: length of loan in months
+        """
+        self._name = name
+        num_payments = length
+        monthly_rate = interest / 12
+
+        self._monthly_payment = principal * (monthly_rate *
+                                             (1 + monthly_rate) ** num_payments) / (
+                                        (1 + monthly_rate) ** num_payments - 1)
+        self._months_remaining = num_payments
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def monthly_payment(self):
+        return self._monthly_payment
+
+    @property
+    def amount_remaining(self):
+        return self._monthly_payment * self._months_remaining
+
+    def on_month_end(self):
+        if self._months_remaining > 0:
+            self._months_remaining -= 1
+            return self._monthly_payment
+        else:
+            return 0
+
+
+class Property:
+
+    def __init__(self, name, budget: Budget, initial_value, appreciation=None,
+                 financing: Loan = None):
+        """
+        Args:
+            budget: budget object this property will be attached to
+            name: name of the property
+            initial_value: starting value of the property
+            appreciation: (can be negative) expected price change over a year (10%=0.10)
+            financing: if there is a loan attached to the purchase
+        """
+        self._name = name
+        self._budget = budget
+        self._value = initial_value
+        self._appreciation = appreciation
+        self._financing = financing
+
+        self._budget.register_property(self)
+
+    def on_month_end(self):
+        value_diff = self._value * self._appreciation / 12
+        self._value += value_diff
+        self._budget.deposit(value_diff)
+        if self._financing is not None:
+            self._budget.withdraw(self._financing.on_month_end())
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def value(self):
+        return self._value
