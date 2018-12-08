@@ -1,10 +1,11 @@
 __author__ = "James Gabriel <JamesCGabriel@gmail.com>"
 import dates
 
+
 class Budget:
     """Budget object which keeps a running tally of all the money"""
 
-    def __init__(self, name, starting_amount, date:dates.Date):
+    def __init__(self, name, starting_amount, date: dates.Date):
         self._name = name
         self._cash = starting_amount
         self._incomes = []
@@ -12,12 +13,38 @@ class Budget:
         self._properties = []
         self._taxes = 0
         self._date = date
+        self._history = []
 
-    def step(self, days=None, months=None, years=None):
-        pass
+    def step(self, days=0, months=0, years=0):
+        for y in range(years):
+            self._step_year()
 
+        for m in range(months):
+            self._step_month()
 
+        for d in range(days):
+            self._step_day()
 
+    def _step_year(self):
+        day = self._date.day
+        month = self._date.month
+        while day != self._date.day and month != self._day.month:
+            self._step_day()
+
+    def _step_month(self):
+        day = self._date.day
+        self._step_day()
+        while day != self._date.day():
+            self._step_day()
+
+    def _step_day(self):
+        eom = self._date.eom
+        eoy = self._date.eoy
+        for income in self._incomes:
+            pass
+
+        for properties in self._properties:
+            pass
 
     @property
     def amount(self):

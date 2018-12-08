@@ -26,19 +26,21 @@ class Date:
         self._year = year
 
     def next(self):
-        self._day += 1
-        if self._day > MONTHS[self._month]:
-            self._day = 1
-            if self._month == "December":
+
+        if self.eom:
+            if self.eoy:
                 self._month = "January"
                 self._year += 1
+                self._day = 1
             else:
                 months = list(MONTHS.keys())
                 for i, v in enumerate(months):
                     if v == self._month:
                         self._month = months[i + 1]
+                        self._day = 1
                         break
-
+        else:
+            self._day += 1
     @property
     def day(self):
         return self._day
@@ -51,9 +53,16 @@ class Date:
     def year(self):
         return self._year
 
-    @ property
+    @property
     def eom(self):
         if self._day == MONTHS[self.month]:
+            return True
+        else:
+            return False
+
+    @property
+    def eoy(self):
+        if self.eom and self._month == "December":
             return True
         else:
             return False

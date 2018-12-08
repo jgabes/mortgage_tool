@@ -27,7 +27,7 @@ class TestDates(unittest.TestCase):
             my_date = dates.Date(day, month, year)
             my_date.next()
             self.assertEqual(my_date.day, 1)
-            self.assertEqual(my_date.month, months[i+1])
+            self.assertEqual(my_date.month, months[i + 1])
             self.assertEqual(my_date.year, year)
 
     def test_year_roll(self):
@@ -38,7 +38,25 @@ class TestDates(unittest.TestCase):
         my_date.next()
         self.assertEqual(my_date.day, 1)
         self.assertEqual(my_date.month, "January")
-        self.assertEqual(my_date.year, year+1)
+        self.assertEqual(my_date.year, year + 1)
+
+    def test_eom(self):
+        for month, length in dates.MONTHS.items():
+            for day in range(1, length + 1):
+                date = dates.Date(day, month, 1990)
+                if date.day == length:
+                    self.assertTrue(date.eom)
+                else:
+                    self.assertFalse(date.eom)
+
+    def test_eoy(self):
+        for month, length in dates.MONTHS.items():
+            for day in range(1, length + 1):
+                date = dates.Date(day, month, 1990)
+                if date.day == dates.MONTHS["December"] and date.month == "December":
+                    self.assertTrue(date.eoy)
+                else:
+                    self.assertFalse(date.eoy)
 
 
 if __name__ == '__main__':
