@@ -61,6 +61,10 @@ class Budget:
     def date(self):
         return self._date
 
+    @property
+    def history(self):
+        return self._history
+
     def deposit(self, other):
         self._cash += other
 

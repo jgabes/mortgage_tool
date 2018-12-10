@@ -1,7 +1,11 @@
 INITIAL_CASH = 10000
 
-INCOMES = [[142000 / 12, "Salary 1", (15, 28)], [148000 / 12, "Salary 2"]]
-EXPENSES = [[2400, "Rent"], [40, "Internet"], [2000, "Food"]]
+INCOMES = [[142000 / 12, "Salary 1", (15, 28)],
+           [148000 / 12, "Salary 2", None]]
+
+EXPENSES = [[2400, "Rent"],
+            [40, "Internet"],
+            [2000, "Food"]]
 
 HOUSE_VALUE = 500000
 

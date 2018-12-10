@@ -1,9 +1,8 @@
 import collections
-import budget
 
 
 class History:
-    def __init__(self, start_date, reference_budget: budget.Budget):
+    def __init__(self, start_date, reference_budget):
         self._budget = reference_budget
         self._history = collections.OrderedDict()
         self._history[start_date] = self._budget.amount
@@ -13,3 +12,6 @@ class History:
             raise ValueError("This day is already recorded")
         else:
             self._history[self._budget.date] = self._budget.amount
+
+    def __call__(self, *args, **kwargs):
+        return self._history
