@@ -1,5 +1,6 @@
 __author__ = "James Gabriel <JamesCGabriel@gmail.com>"
 import collections
+import datetime
 
 MONTHS = collections.OrderedDict([
     ("January", 31),
@@ -19,6 +20,13 @@ MONTHS = collections.OrderedDict([
 
 class Date:
     """Wrapper for the date"""
+
+    @classmethod
+    def today(cls):
+        d = datetime.date.today()
+        return cls(d.day,
+                   list(MONTHS.keys())[d.month - 1],
+                   d.year)
 
     def __init__(self, day, month, year):
         self._day = day
@@ -41,6 +49,7 @@ class Date:
                         break
         else:
             self._day += 1
+
     @property
     def day(self):
         return self._day
